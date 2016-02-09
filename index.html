@@ -12,13 +12,11 @@ rosso: #D32228
 nero: black
 */
 var colors = ['#A8A9AB', '#D32228','black'];
-var images = ['http://www.top-ix.org/wp-content/uploads/2014/12/favicon_topix.png',
-			  'https://github.com/favicon.ico',
-			  'http://cliparts.co/cliparts/LTd/oyK/LTdoyKnAc.jpg']
+var images = ['/img/element-black.png', '/img/element-grey.png', '/img/element-red.png']
 var width = 500,
     height = 500;
 
-var nodes = d3.range(50).map(function() { return {radius: Math.random() * 12 + 6}; }),
+var nodes = d3.range(100).map(function() { return {radius: Math.random() * 12 + 6}; }),
     root = nodes[0];
 
 
@@ -43,25 +41,27 @@ var node = svg.selectAll(".node")
 	.enter().append("g")
 	.attr("class", "node")
 	.call(force.drag);
-/*
+
 var rectangle = svg.append("rect")
-                            .attr("x", 300)
-                            .attr("y", 300)
-                            .attr("width", 100)
-                            .attr("height", 100)
-                            .attr("transform", function(d){
-                              return "translate(0,0) rotate(-10)";
-                            });
-*/
+                  .attr("x", 100)
+                  .attr("y", 100)
+                  .attr("width", 100)
+                  .attr("height", 100);
+                  /*.attr("transform", "translate(0,0)")
+                  .attr("transform", function(d){
+                    return "rotate(-30)";
+                  });*/
+
+
 svg.selectAll("image")
     .data(nodes.slice(1))
     .enter().append("image")
     .attr("width", function(d) { return d.radius; })
     .attr("height", function(d) { console.log(d);return d.radius; })
-    /*.attr("transform", function(d){
-        return "rotate(100, 150,130)";
-      })*/
     .attr("xlink:href", function(d, i) { return images[i % 3]; })
+    .attr("transform", function(d){
+        return "translate(20,20) rotate(10)";
+      });
     //.style("fill", function(d, i) { return colors[i % 3]; });
 /*
   .attr("transform", function(d){
