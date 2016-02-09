@@ -13,10 +13,10 @@ nero: black
 */
 var colors = ['#A8A9AB', '#D32228','black'];
 var images = ['/img/element-black.png', '/img/element-grey.png', '/img/element-red.png']
-var width = 500,
+var width = 700,
     height = 500;
 
-var nodes = d3.range(100).map(function() { return {radius: Math.random() * 12 + 6}; }),
+var nodes = d3.range(150).map(function() { return {radius: Math.random() * 12 + 12}; }),
     root = nodes[0];
 
 
@@ -42,32 +42,24 @@ var node = svg.selectAll(".node")
 	.attr("class", "node")
 	.call(force.drag);
 
-var rectangle = svg.append("rect")
-                  .attr("x", 100)
-                  .attr("y", 100)
-                  .attr("width", 100)
-                  .attr("height", 100);
-                  /*.attr("transform", "translate(0,0)")
-                  .attr("transform", function(d){
-                    return "rotate(-30)";
-                  });*/
 
-
-svg.selectAll("image")
+svg.selectAll("rect")
     .data(nodes.slice(1))
     .enter().append("image")
     .attr("width", function(d) { return d.radius; })
-    .attr("height", function(d) { console.log(d);return d.radius; })
+    .attr("height", function(d) { return d.radius; })
     .attr("xlink:href", function(d, i) { return images[i % 3]; })
-    .attr("transform", function(d){
-        return "translate(20,20) rotate(10)";
-      });
-    //.style("fill", function(d, i) { return colors[i % 3]; });
-/*
-  .attr("transform", function(d){
-    return "rotate(40 150,130)";
-  })
-*/
+
+var rectangle = svg.append("rect")
+				            .attr("x", 100)
+				            .attr("y", 100)
+				            .attr("width", 300)
+				            .attr("height", 200);
+var timer = setInterval(function(){
+	root.px = 180;
+	root.py = 270;
+	force.resume();
+}, 300);
 
 force.on("tick", function(e) {
   var q = d3.geom.quadtree(nodes),
