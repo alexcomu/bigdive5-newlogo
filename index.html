@@ -5,24 +5,29 @@
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script>
 
-/*
-colori BIG DIVE
-grigio: #A8A9AB
-rosso: #D32228
-nero: black
-*/
-var colors = ['#A8A9AB', '#D32228','black'];
+/****************************
+* VARIABLES									*
+*****************************/
+
 var images = ['/img/element-black.png', '/img/element-grey.png', '/img/element-red.png']
 var width = 700,
-    height = 500;
+    height = 500,
+		nodes_number=150;
 
-var nodes = d3.range(150).map(function() { return {radius: Math.random() * 12 + 12}; }),
+
+var svg = d3.select("body").append("svg")
+				.attr("width", width)
+				.attr("height", height);
+
+var bigdive = {width:300,
+					 height:200,
+					 xpos:100,
+					 ypos:100,
+					 forcex:180,
+					 forcey:270};
+
+var nodes = d3.range(nodes_number).map(function() { return {radius: Math.random() * 12 + 12}; }),
     root = nodes[0];
-
-
-root.radius = 0;
-root.fixed = true;
-
 
 var force = d3.layout.force()
     .gravity(0.05)
@@ -30,34 +35,32 @@ var force = d3.layout.force()
     .nodes(nodes)
     .size([width, height]);
 
+root.radius = 0;
+root.fixed = true;
 force.start();
 
-var svg = d3.select("body").append("svg")
-	.attr("width", width)
-	.attr("height", height);
-
-var node = svg.selectAll(".node")
-	.data(nodes)
-	.enter().append("g")
-	.attr("class", "node")
-	.call(force.drag);
-
-
-svg.selectAll("rect")
+// TRIANGLE IMAGES
+svg.selectAll("image")
     .data(nodes.slice(1))
     .enter().append("image")
     .attr("width", function(d) { return d.radius; })
     .attr("height", function(d) { return d.radius; })
     .attr("xlink:href", function(d, i) { return images[i % 3]; })
 
-var rectangle = svg.append("rect")
-				            .attr("x", 100)
-				            .attr("y", 100)
-				            .attr("width", 300)
-				            .attr("height", 200);
+// BIG DIVE RECTANGLE
+svg.append("rect")
+    .attr("x", bigdive.xpos)
+    .attr("y", bigdive.ypos)
+    .attr("width", bigdive.width)
+    .attr("height", bigdive.height);
+
+/****************************
+* ACTIONS 									*
+*****************************/
+
 var timer = setInterval(function(){
-	root.px = 180;
-	root.py = 270;
+	root.px = bigdive.forcex;
+	root.py = bigdive.forcey;
 	force.resume();
 }, 300);
 
@@ -79,6 +82,10 @@ svg.on("mousemove", function() {
   root.py = p1[1];
   force.resume();
 });
+
+/****************************
+* UTILS   									*
+*****************************/
 
 function collide(node) {
   var r = node.radius + 16,
