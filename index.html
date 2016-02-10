@@ -9,17 +9,18 @@
         *****************************/
 
         var images = ['/img/element-black.png', '/img/element-grey.png', '/img/element-red.png'],
-        titles = ['5 edition', 'HACKING', 'DEVELOPMENT', 'VISUALIZATION', 'DATA SCIENCE'],
-        text_apex = 'th';
+            titles = ['5 edition', 'HACKING', 'DEVELOPMENT', 'VISUALIZATION', 'DATA SCIENCE'],
+            text_apex = 'th';
+
         var width = 900,
-        height = 500,
-        nodes_number=150,
-        title_cont = 0;
+            height = 500,
+            nodes_number=150,
+            title_cont = 0;
 
 
         var svg = d3.select("body").append("svg")
-        .attr("width", width)
-        .attr("height", height);
+            .attr("width", width)
+            .attr("height", height);
 
         var bigdive = {
             width: 450,
@@ -34,7 +35,7 @@
             logoy: 150
         };
 
-        var nodes = d3.range(nodes_number).map(function() { return {radius: Math.random() * 12 + 10}; }),
+        var nodes = d3.range(nodes_number).map(function() { return {radius: Math.random() * 12 + 11}; }),
             root = nodes[0];
 
         var force = d3.layout.force()
@@ -51,12 +52,14 @@
         svg.selectAll("image")
             .data(nodes.slice(1))
             .enter().append("image")
+            .attr("class", "triangle")
             .attr("width", function(d) { return d.radius; })
             .attr("height", function(d) { return d.radius; })
             .attr("xlink:href", function(d, i) { return images[i % 3]; });
 
         // BIG DIVE RECTANGLE
         svg.append("rect")
+            .attr("class", "bigdive_container")
             .attr("x", bigdive.xpos)
             .attr("y", bigdive.ypos)
             .attr("width", bigdive.width)
@@ -65,13 +68,16 @@
 
         // BIG DIVE LOGO
         svg.append("image")
+            .attr("class", "bigdive_logo")
             .attr('width', bigdive.logo_width)
             .attr('height', bigdive.logo_height)
+            .attr('x', bigdive.logox)
+            .attr('y', bigdive.logoy)
             .attr("xlink:href", "/img/bigdive_img.png");
 
         // Text
         svg.append("text")
-            .attr("class", "titles")
+            .attr("class", "bigdive_title")
             .style("fill", "black")
             .attr("text-anchor", "middle")
             .attr("x", function(){
@@ -80,18 +86,18 @@
             .attr("y", 320)
             .attr("font-family", "sans-serif")
             .attr("font-size", "35px")
-            .html("5 edition");
+            .text("5 edition");
 
         svg.append("text")
             .attr("class", "apex")
             .style("fill", "black")
             .attr("x", function(){
-                return bigdive.logox + (bigdive.logo_width/2) - 49;
+                return bigdive.logox + (bigdive.logo_width/2) - 48;
             })
             .attr("y", 300)
             .attr("font-family", "sans-serif")
             .attr("font-size", "15px")
-            .text("th");
+            .text(text_apex);
 
         /****************************
         * ACTIONS                   *
@@ -105,16 +111,7 @@
 
         var text_timer = setInterval(function(){
             title_cont++;
-            title_cont = title_cont % titles.length;
-            if(title_cont==0)   svg.selectAll(".apex").text("th");
-            else                svg.selectAll(".apex").text("");
-            svg.selectAll(".titles")
-                .html(function(){
-                    return titles[title_cont];
-                })
-                /*.text(function(){
-                    return titles[title_cont];
-                })*/
+            set_title();
         }, 1500);
 
         force.on("tick", function(e) {
@@ -123,15 +120,9 @@
             n = nodes.length;
             while (++i < n) q.visit(collide(nodes[i]));
 
-            svg.selectAll("image")
-            .attr("x", function(d) {
-                if(d) return d.x;
-                return bigdive.logox;
-            })
-            .attr("y", function(d) {
-                if(d) return d.y;
-                return bigdive.logoy;
-            });
+            svg.selectAll(".triangle")
+            .attr("x", function(d) { return d.x; })
+            .attr("y", function(d) { return d.y; });
         });
 
         svg.on("mousemove", function() {
@@ -144,6 +135,15 @@
         /****************************
         * UTILS                      *
         *****************************/
+
+        function set_title(){
+            title_cont = title_cont % titles.length;
+            svg.select(".apex").style("opacity", function(){
+                if(title_cont) return 0;
+                return 1;
+            });
+            svg.select(".bigdive_title").html(function(){ return titles[title_cont];})
+        }
 
         function collide(node) {
             var r = node.radius + 16,
