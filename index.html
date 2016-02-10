@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<head><title>BigDive5 new Logo</title></head>
+<head><title>BigDive5 new Logo</title>
+
+</head>
 <body>
     <script src="//d3js.org/d3.v3.min.js"></script>
     <script>
@@ -8,13 +10,22 @@
         * VARIABLES                 *
         *****************************/
 
-        var images = ['/img/element-black.png', '/img/element-grey.png', '/img/element-red.png'],
+        var images = ['/img/triangle/bigdive5-02.png',
+                        '/img/triangle/bigdive5-02.png',
+                        '/img/triangle/bigdive5-03.png',
+                        '/img/triangle/bigdive5-04.png',
+                        '/img/triangle/bigdive5-05.png',
+                        '/img/triangle/bigdive5-06.png',
+                        '/img/triangle/bigdive5-07.png',
+                        '/img/triangle/bigdive5-08.png',
+                        '/img/triangle/bigdive5-09.png',
+                        '/img/triangle/bigdive5-10.png'],
             titles = ['5 edition', 'HACKING', 'DEVELOPMENT', 'VISUALIZATION', 'DATA SCIENCE'],
             text_apex = 'th';
 
-        var width = 900,
-            height = 500,
-            nodes_number=150,
+        var width = 910,
+            height = 410,
+            nodes_number=200,
             title_cont = 0;
 
 
@@ -23,19 +34,21 @@
             .attr("height", height);
 
         var bigdive = {
-            width: 450,
-            height: 300,
-            xpos: 100,
-            ypos: 100,
+            width: 495,
+            height: 278,
+            xpos: 120,
+            ypos: 80,
             forcex: 100,
             forcey: 270,
-            logo_width: 370,
-            logo_height: 110,
-            logox: 100,
-            logoy: 150
+            logo_width: 309,
+            logo_height: 89,
+            logox: 192,
+            logoy: 130,
+            texty: 300,
+            apex_texty: 280
         };
 
-        var nodes = d3.range(nodes_number).map(function() { return {radius: Math.random() * 12 + 11}; }),
+        var nodes = d3.range(nodes_number).map(function() { return {radius: Math.random() * 12 + 13}; }),
             root = nodes[0];
 
         var force = d3.layout.force()
@@ -55,7 +68,7 @@
             .attr("class", "triangle")
             .attr("width", function(d) { return d.radius; })
             .attr("height", function(d) { return d.radius; })
-            .attr("xlink:href", function(d, i) { return images[i % 3]; });
+            .attr("xlink:href", function(d, i) { return images[i % images.length]; });
 
         // BIG DIVE RECTANGLE
         svg.append("rect")
@@ -73,7 +86,7 @@
             .attr('height', bigdive.logo_height)
             .attr('x', bigdive.logox)
             .attr('y', bigdive.logoy)
-            .attr("xlink:href", "/img/bigdive_img.png");
+            .attr("xlink:href", "/img/bigdive5-logo.png");
 
         // Text
         svg.append("text")
@@ -83,8 +96,8 @@
             .attr("x", function(){
                 return bigdive.logox + (bigdive.logo_width/2);
             })
-            .attr("y", 320)
-            .attr("font-family", "sans-serif")
+            .attr("y", bigdive.texty)
+            .attr("font-family", "Montserrat;")
             .attr("font-size", "35px")
             .text("5 edition");
 
@@ -92,9 +105,9 @@
             .attr("class", "apex")
             .style("fill", "black")
             .attr("x", function(){
-                return bigdive.logox + (bigdive.logo_width/2) - 48;
+                return bigdive.logox + (bigdive.logo_width/2) - 45;
             })
-            .attr("y", 300)
+            .attr("y", bigdive.apex_texty)
             .attr("font-family", "sans-serif")
             .attr("font-size", "15px")
             .text(text_apex);
