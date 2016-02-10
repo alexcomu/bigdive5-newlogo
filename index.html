@@ -9,7 +9,7 @@
         *****************************/
 
         var images = ['/img/element-black.png', '/img/element-grey.png', '/img/element-red.png'],
-        titles = ['5    edition', 'HACKING', 'DEVELOPMENT', 'VISUALIZATION', 'DATA SCIENCE'],
+        titles = ['5 edition', 'HACKING', 'DEVELOPMENT', 'VISUALIZATION', 'DATA SCIENCE'],
         text_apex = 'th';
         var width = 900,
         height = 500,
@@ -53,7 +53,7 @@
             .enter().append("image")
             .attr("width", function(d) { return d.radius; })
             .attr("height", function(d) { return d.radius; })
-            .attr("xlink:href", function(d, i) { return images[i % 3]; })
+            .attr("xlink:href", function(d, i) { return images[i % 3]; });
 
         // BIG DIVE RECTANGLE
         svg.append("rect")
@@ -75,12 +75,12 @@
             .style("fill", "black")
             .attr("text-anchor", "middle")
             .attr("x", function(){
-                return bigdive.logox + (bigdive.logo_width/2)
+                return bigdive.logox + (bigdive.logo_width/2);
             })
             .attr("y", 320)
             .attr("font-family", "sans-serif")
             .attr("font-size", "35px")
-            .text("5    edition");
+            .html("5 edition");
 
         svg.append("text")
             .attr("class", "apex")
@@ -106,15 +106,15 @@
         var text_timer = setInterval(function(){
             title_cont++;
             title_cont = title_cont % titles.length;
-            if(title_cont==0){
-                svg.selectAll(".apex").text("th");
-            }else{
-                svg.selectAll(".apex").text("");
-            }
+            if(title_cont==0)   svg.selectAll(".apex").text("th");
+            else                svg.selectAll(".apex").text("");
             svg.selectAll(".titles")
-                .text(function(){
+                .html(function(){
                     return titles[title_cont];
                 })
+                /*.text(function(){
+                    return titles[title_cont];
+                })*/
         }, 1500);
 
         force.on("tick", function(e) {
