@@ -1,115 +1,173 @@
 <!DOCTYPE html>
-	<meta charset="utf-8">
-		<head><title>BigDive5 new Logo</title></head>
-	<body>
-		<script src="//d3js.org/d3.v3.min.js"></script>
-		<script>
+<meta charset="utf-8">
+<head><title>BigDive5 new Logo</title></head>
+<body>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script>
+        /****************************
+        * VARIABLES                 *
+        *****************************/
 
-			/****************************
-			* VARIABLES									*
-			*****************************/
+        var images = ['/img/element-black.png', '/img/element-grey.png', '/img/element-red.png'],
+        titles = ['5    edition', 'HACKING', 'DEVELOPMENT', 'VISUALIZATION', 'DATA SCIENCE'],
+        text_apex = 'th';
+        var width = 900,
+        height = 500,
+        nodes_number=150,
+        title_cont = 0;
 
-			var images = ['/img/element-black.png', '/img/element-grey.png', '/img/element-red.png']
-			var width = 700,
-			    height = 500,
-					nodes_number=150;
 
+        var svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height);
 
-			var svg = d3.select("body").append("svg")
-							.attr("width", width)
-							.attr("height", height);
+        var bigdive = {
+            width: 450,
+            height: 300,
+            xpos: 100,
+            ypos: 100,
+            forcex: 100,
+            forcey: 270,
+            logo_width: 370,
+            logo_height: 110,
+            logox: 100,
+            logoy: 150
+        };
 
-			var bigdive = {width:300,
-								 height:200,
-								 xpos:100,
-								 ypos:100,
-								 forcex:180,
-								 forcey:270};
+        var nodes = d3.range(nodes_number).map(function() { return {radius: Math.random() * 12 + 10}; }),
+            root = nodes[0];
 
-			var nodes = d3.range(nodes_number).map(function() { return {radius: Math.random() * 12 + 12}; }),
-			    root = nodes[0];
+        var force = d3.layout.force()
+            .gravity(0.05)
+            .charge(function(d, i) { return i ? 0 : -2000; })
+            .nodes(nodes)
+            .size([width, height]);
 
-			var force = d3.layout.force()
-			    .gravity(0.05)
-			    .charge(function(d, i) { return i ? 0 : -2000; })
-			    .nodes(nodes)
-			    .size([width, height]);
+        root.radius = 0;
+        root.fixed = true;
+        force.start();
 
-			root.radius = 0;
-			root.fixed = true;
-			force.start();
+        // TRIANGLE IMAGES
+        svg.selectAll("image")
+            .data(nodes.slice(1))
+            .enter().append("image")
+            .attr("width", function(d) { return d.radius; })
+            .attr("height", function(d) { return d.radius; })
+            .attr("xlink:href", function(d, i) { return images[i % 3]; })
 
-			// TRIANGLE IMAGES
-			svg.selectAll("image")
-			    .data(nodes.slice(1))
-			    .enter().append("image")
-			    .attr("width", function(d) { return d.radius; })
-			    .attr("height", function(d) { return d.radius; })
-			    .attr("xlink:href", function(d, i) { return images[i % 3]; })
+        // BIG DIVE RECTANGLE
+        svg.append("rect")
+            .attr("x", bigdive.xpos)
+            .attr("y", bigdive.ypos)
+            .attr("width", bigdive.width)
+            .attr("height", bigdive.height)
+            .style("fill", "white");
 
-			// BIG DIVE RECTANGLE
-			svg.append("rect")
-			    .attr("x", bigdive.xpos)
-			    .attr("y", bigdive.ypos)
-			    .attr("width", bigdive.width)
-			    .attr("height", bigdive.height);
+        // BIG DIVE LOGO
+        svg.append("image")
+            .attr('width', bigdive.logo_width)
+            .attr('height', bigdive.logo_height)
+            .attr("xlink:href", "/img/bigdive_img.png");
 
-			/****************************
-			* ACTIONS 									*
-			*****************************/
+        // Text
+        svg.append("text")
+            .attr("class", "titles")
+            .style("fill", "black")
+            .attr("text-anchor", "middle")
+            .attr("x", function(){
+                return bigdive.logox + (bigdive.logo_width/2)
+            })
+            .attr("y", 320)
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "35px")
+            .text("5    edition");
 
-			var timer = setInterval(function(){
-				root.px = bigdive.forcex;
-				root.py = bigdive.forcey;
-				force.resume();
-			}, 50);
+        svg.append("text")
+            .attr("class", "apex")
+            .style("fill", "black")
+            .attr("x", function(){
+                return bigdive.logox + (bigdive.logo_width/2) - 49;
+            })
+            .attr("y", 300)
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "15px")
+            .text("th");
 
-			force.on("tick", function(e) {
-			  var q = d3.geom.quadtree(nodes),
-			      i = 0,
-			      n = nodes.length;
+        /****************************
+        * ACTIONS                   *
+        *****************************/
 
-			  while (++i < n) q.visit(collide(nodes[i]));
+        var force_timer = setInterval(function(){
+            root.px = bigdive.forcex;
+            root.py = bigdive.forcey;
+            force.resume();
+        }, 50);
 
-			  svg.selectAll("image")
-			      .attr("x", function(d) { return d.x; })
-			      .attr("y", function(d) { return d.y; });
-			});
+        var text_timer = setInterval(function(){
+            title_cont++;
+            title_cont = title_cont % titles.length;
+            if(title_cont==0){
+                svg.selectAll(".apex").text("th");
+            }else{
+                svg.selectAll(".apex").text("");
+            }
+            svg.selectAll(".titles")
+                .text(function(){
+                    return titles[title_cont];
+                })
+        }, 1500);
 
-			svg.on("mousemove", function() {
-			  var p1 = d3.mouse(this);
-			  root.px = p1[0];
-			  root.py = p1[1];
-			  force.resume();
-			});
+        force.on("tick", function(e) {
+            var q = d3.geom.quadtree(nodes),
+            i = 0,
+            n = nodes.length;
+            while (++i < n) q.visit(collide(nodes[i]));
 
-			/****************************
-			* UTILS   									*
-			*****************************/
+            svg.selectAll("image")
+            .attr("x", function(d) {
+                if(d) return d.x;
+                return bigdive.logox;
+            })
+            .attr("y", function(d) {
+                if(d) return d.y;
+                return bigdive.logoy;
+            });
+        });
 
-			function collide(node) {
-			  var r = node.radius + 16,
-			      nx1 = node.x - r,
-			      nx2 = node.x + r,
-			      ny1 = node.y - r,
-			      ny2 = node.y + r;
-			  return function(quad, x1, y1, x2, y2) {
-			    if (quad.point && (quad.point !== node)) {
-			      var x = node.x - quad.point.x,
-			          y = node.y - quad.point.y,
-			          l = Math.sqrt(x * x + y * y),
-			          r = node.radius + quad.point.radius;
-			      if (l < r) {
-			        l = (l - r) / l * .5;
-			        node.x -= x *= l;
-			        node.y -= y *= l;
-			        quad.point.x += x;
-			        quad.point.y += y;
-			      }
-			    }
-			    return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
-			  };
-			}
-	</script>
+        svg.on("mousemove", function() {
+            var p1 = d3.mouse(this);
+            root.px = p1[0];
+            root.py = p1[1];
+            force.resume();
+        });
+
+        /****************************
+        * UTILS                      *
+        *****************************/
+
+        function collide(node) {
+            var r = node.radius + 16,
+            nx1 = node.x - r,
+            nx2 = node.x + r,
+            ny1 = node.y - r,
+            ny2 = node.y + r;
+            return function(quad, x1, y1, x2, y2) {
+                if (quad.point && (quad.point !== node)) {
+                    var x = node.x - quad.point.x,
+                    y = node.y - quad.point.y,
+                    l = Math.sqrt(x * x + y * y),
+                    r = node.radius + quad.point.radius;
+                    if (l < r) {
+                        l = (l - r) / l * .5;
+                        node.x -= x *= l;
+                        node.y -= y *= l;
+                        quad.point.x += x;
+                        quad.point.y += y;
+                    }
+                }
+                return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+            };
+        }
+    </script>
 </body>
 </html>
