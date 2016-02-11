@@ -3,7 +3,6 @@
 *****************************/
 
 var images = ['/img/triangle/bigdive5-02.png',
-                '/img/triangle/bigdive5-02.png',
                 '/img/triangle/bigdive5-03.png',
                 '/img/triangle/bigdive5-04.png',
                 '/img/triangle/bigdive5-05.png',
@@ -17,30 +16,30 @@ var images = ['/img/triangle/bigdive5-02.png',
 
 var width = 910,
     height = 410,
-    nodes_number=200,
+    nodes_number=190,
     title_cont = 0;
 
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("body").append("svg").attr("class","mySvg")
     .attr("width", width)
     .attr("height", height);
 
 var bigdive = {
-    width: 495,
-    height: 278,
-    xpos: 120,
+    width: 400,
+    height: 250,
+    xpos: 90,
     ypos: 80,
-    forcex: 100,
-    forcey: 270,
-    logo_width: 309,
-    logo_height: 89,
-    logox: 192,
-    logoy: 130,
-    texty: 300,
-    apex_texty: 280
+    forcex: 300,
+    forcey: 210,
+    logo_width: 250,
+    logo_height: 71,
+    logox: 165,
+    logoy: 140,
+    texty: 260,
+    apex_texty: 240
 };
 
-var nodes = d3.range(nodes_number).map(function() { return {radius: Math.random() * 12 + 13}; }),
+var nodes = d3.range(nodes_number).map(function() { return {radius: Math.random() * 12 + 7}; }),
     root = nodes[0];
 
 var force = d3.layout.force()
@@ -69,7 +68,7 @@ svg.append("rect")
     .attr("y", bigdive.ypos)
     .attr("width", bigdive.width)
     .attr("height", bigdive.height)
-    .style("fill", "white");
+    .attr("fill", "white");
 
 // BIG DIVE LOGO
 svg.append("image")
@@ -90,14 +89,14 @@ svg.append("text")
     })
     .attr("y", bigdive.texty)
     .attr("font-family", "Montserrat;")
-    .attr("font-size", "35px")
+    .attr("font-size", "28px")
     .text("5 edition");
 
 svg.append("text")
     .attr("class", "apex")
     .style("fill", "black")
     .attr("x", function(){
-        return bigdive.logox + (bigdive.logo_width/2) - 45;
+        return bigdive.logox + (bigdive.logo_width/2) - 43;
     })
     .attr("y", bigdive.apex_texty)
     .attr("font-family", "sans-serif")
